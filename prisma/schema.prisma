@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  nom       String
+  prenom    String
+  role      Role     @default(ETUDIANTE)
+  bio       String?
+  avatar    String?
+  createdAt DateTime @default(now())
+
+  inscriptions Inscription[]
+  questions    Question[]
+  mentorات     Mentorat[]    @relation("Mentor")
+  mentoreات    Mentorat[]    @relation("Mentee")
+}
+
+enum Role {
+  ETUDIANTE
+  INTERVENANTE
+  ADMIN
+}
+
+model Session {
+  id          String   @id @default(cuid())
+  titre       String
+  description String
+  date        DateTime
+  duree       Int
+  intervenante String
+  replayUrl   String?
+  createdAt   DateTime @default(now())
+
+  inscriptions Inscription[]
+}
+
+model Inscription {
+  id        String   @id @default(cuid())
+  userId    String
+  sessionId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  session Session @relation(fields: [sessionId], references: [id])
+
+  @@unique([userId, sessionId])
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  contenu   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  reponses  Reponse[]
+}
+
+model Reponse {
+  id         String   @id @default(cuid())
+  contenu    String
+  questionId String
+  auteur     String
+  createdAt  DateTime @default(now())
+
+  question Question @relation(fields: [questionId], references: [id])
+}
+
+model Mentorat {
+  id        String        @id @default(cuid())
+  mentorId  String
+  menteeId  String
+  statut    StatutMentorat @default(EN_ATTENTE)
+  createdAt DateTime      @default(now())
+
+  mentor User @relation("Mentor", fields: [mentorId], references: [id])
+  mentee User @relation("Mentee", fields: [menteeId], references: [id])
+}
+
+enum StatutMentorat {
+  EN_ATTENTE
+  ACCEPTE
+  REFUSE
+}
