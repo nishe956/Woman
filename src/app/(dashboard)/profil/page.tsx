@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { User, Calendar, MessageSquare, HeartHandshake, Edit3, Check, Sparkles, AlertCircle } from 'lucide-react'
 
 interface Session {
   id: string
@@ -14,7 +15,7 @@ interface Inscription {
   session: Session
 }
 
-interface User {
+interface UserProfile {
   id: string
   nom: string
   prenom: string
@@ -25,7 +26,7 @@ interface User {
 }
 
 export default function ProfilPage() {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [editBio, setEditBio] = useState(false)
   const [bio, setBio] = useState('')
@@ -53,119 +54,150 @@ export default function ProfilPage() {
     })
     setEditBio(false)
     fetchProfil()
-    toast.success('Bio mise a jour !')
+    toast.success('Votre bio a été mise à jour !')
   }
 
   if (loading) return (
-    <div className="max-w-2xl">
-      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6 animate-pulse">
+    <div className="max-w-2xl mx-auto space-y-4">
+      <div className="bg-white rounded-2xl border border-slate-100 p-6 animate-pulse">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-full bg-gray-100" />
-          <div>
-            <div className="h-4 bg-gray-100 rounded w-32 mb-2" />
-            <div className="h-3 bg-gray-100 rounded w-48" />
+          <div className="w-16 h-16 rounded-full bg-slate-100" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 bg-slate-100 rounded w-1/3" />
+            <div className="h-3 bg-slate-100 rounded w-1/2" />
           </div>
+        </div>
+        <div className="space-y-2">
+          <div className="h-4 bg-slate-100 rounded w-full" />
+          <div className="h-4 bg-slate-100 rounded w-3/4" />
         </div>
       </div>
     </div>
   )
 
-  if (!user) return <p className="text-gray-500">Utilisateur introuvable</p>
+  if (!user) return <p className="text-red-500 font-semibold">Utilisateur introuvable</p>
 
   const initiales = `${user.prenom[0]}${user.nom[0]}`.toUpperCase()
 
   return (
-    <div className="max-w-2xl">
-      <h2 className="text-2xl font-bold text-gray-800 mb-8">Mon Profil</h2>
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-purple-100/40">
+        <h2 className="text-2xl font-bold font-serif text-slate-900 tracking-tight flex items-center gap-2">
+          <User className="w-6 h-6 text-purple-600" />
+          Mon Profil
+        </h2>
+      </div>
 
-      {/* Carte profil */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6 hover:shadow-sm transition">
+      {/* Profil Card */}
+      <div className="bg-white rounded-2xl border border-purple-100/50 p-6 shadow-sm hover:shadow-md transition-all duration-300">
         
-        {/* Header profil */}
-        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-purple-700 flex items-center justify-center shadow-md">
-            <span className="text-2xl font-bold text-white">
-              {initiales}
-            </span>
+        {/* Header Profile */}
+        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-650 flex items-center justify-center shadow-md text-white text-2xl font-bold font-serif">
+            {initiales}
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-800">
+            <h3 className="text-lg font-bold text-slate-900 leading-tight">
               {user.prenom} {user.nom}
             </h3>
-            <p className="text-sm text-gray-500 mt-0.5">{user.email}</p>
-            <span className={`text-xs px-3 py-1 rounded-full mt-2 inline-block font-medium ${
+            <p className="text-xs text-slate-400 mt-1">{user.email}</p>
+            <span className={`text-[10px] px-2.5 py-0.5 rounded-full mt-2.5 inline-block font-bold uppercase tracking-wider ${
               user.role === 'ADMIN'
-                ? 'bg-amber-100 text-amber-700'
-                : 'bg-purple-100 text-purple-700'
+                ? 'bg-amber-50 text-amber-700 border border-amber-100'
+                : 'bg-purple-50 text-purple-700 border border-purple-100/50'
             }`}>
               {user.role}
             </span>
           </div>
         </div>
 
-        {/* Stats rapides */}
-        <div className="grid grid-cols-3 gap-4 mb-6 pb-6 border-b border-gray-100">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-purple-700">
+        {/* Quick Stats Grid */}
+        <div className="grid grid-cols-3 gap-4 mb-6 pb-6 border-b border-slate-100">
+          <div className="text-center bg-slate-50/50 border border-slate-100 rounded-xl p-3">
+            <div className="flex justify-center mb-1">
+              <Calendar className="w-4 h-4 text-purple-500" />
+            </div>
+            <p className="text-xl font-bold text-slate-900 leading-none">
               {user.inscriptions.length}
             </p>
-            <p className="text-xs text-gray-400 mt-1">Sessions</p>
+            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1.5">Sessions</p>
           </div>
-          <div className="text-center border-x border-gray-100">
-            <p className="text-2xl font-bold text-purple-700">0</p>
-            <p className="text-xs text-gray-400 mt-1">Questions</p>
+          <div className="text-center bg-slate-50/50 border border-slate-100 rounded-xl p-3">
+            <div className="flex justify-center mb-1">
+              <MessageSquare className="w-4 h-4 text-purple-500" />
+            </div>
+            <p className="text-xl font-bold text-slate-900 leading-none">
+              0
+            </p>
+            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1.5">Questions</p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-purple-700">0</p>
-            <p className="text-xs text-gray-400 mt-1">Mentorals</p>
+          <div className="text-center bg-slate-50/50 border border-slate-100 rounded-xl p-3">
+            <div className="flex justify-center mb-1">
+              <HeartHandshake className="w-4 h-4 text-purple-500" />
+            </div>
+            <p className="text-xl font-bold text-slate-900 leading-none">
+              0
+            </p>
+            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1.5">Mentorats</p>
           </div>
         </div>
 
-        {/* Bio */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-semibold text-gray-700">Bio</h4>
+        {/* Bio Section */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-purple-500" />
+              Ma Biographie
+            </h4>
             <button
               onClick={() => setEditBio(!editBio)}
-              className="text-xs text-purple-700 hover:underline"
+              className="text-xs font-bold text-purple-700 hover:text-purple-800 flex items-center gap-1"
             >
+              <Edit3 className="w-3.5 h-3.5" />
               {editBio ? 'Annuler' : 'Modifier'}
             </button>
           </div>
           {editBio ? (
-            <div>
+            <div className="space-y-3">
               <textarea
                 value={bio}
                 onChange={e => setBio(e.target.value)}
-                className="border border-gray-200 rounded-lg px-4 py-3 text-sm w-full focus:outline-none focus:border-purple-300 transition"
+                className="border border-slate-200 focus:border-purple-400 rounded-xl px-4 py-3 text-sm w-full outline-none transition-all duration-200 bg-slate-50 focus:bg-white resize-none"
                 rows={3}
-                placeholder="Parle-nous de toi..."
+                placeholder="Parle-nous de ton parcours, de tes passions tech et de ce que tu recherches..."
               />
-              <button
-                onClick={sauvegarderBio}
-                className="mt-2 bg-purple-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-800 transition"
-              >
-                Sauvegarder
-              </button>
+              <div className="flex justify-end">
+                <button
+                  onClick={sauvegarderBio}
+                  className="bg-purple-700 hover:bg-purple-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-md shadow-purple-50 transition-all flex items-center gap-1"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  Sauvegarder
+                </button>
+              </div>
             </div>
           ) : (
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {user.bio || 'Aucune bio pour le moment — clique sur Modifier pour en ajouter une !'}
+            <p className="text-sm text-slate-600 leading-relaxed italic bg-slate-50/50 p-4 border border-slate-100 rounded-xl">
+              {user.bio || 'Aucune biographie pour le moment. Clique sur Modifier pour te présenter à la communauté !'}
             </p>
           )}
         </div>
       </div>
 
-      {/* Sessions inscrites */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition">
-        <h4 className="text-sm font-semibold text-gray-700 mb-4">
-          Mes sessions inscrites
+      {/* Registered Sessions Card */}
+      <div className="bg-white rounded-2xl border border-purple-100/50 p-6 shadow-sm">
+        <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <Calendar className="w-4 h-4 text-purple-500" />
+          Mes sessions enregistrées
         </h4>
         {user.inscriptions.length === 0 ? (
-          <div className="text-center py-6">
-            <p className="text-3xl mb-2">📅</p>
-            <p className="text-sm text-gray-400">
-              Tu n'es inscrite a aucune session pour le moment.
+          <div className="text-center py-8">
+            <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center mx-auto mb-3">
+              <AlertCircle className="w-6 h-6 text-purple-400" />
+            </div>
+            <p className="text-slate-450 text-sm">
+              Tu ne t'es inscrite à aucune session pour le moment.
             </p>
           </div>
         ) : (
@@ -175,15 +207,15 @@ export default function ProfilPage() {
               return (
                 <div
                   key={inscription.id}
-                  className="flex items-center justify-between bg-gray-50 rounded-lg p-3 hover:bg-purple-50 transition"
+                  className="flex items-center justify-between bg-slate-50/50 hover:bg-purple-50/30 border border-slate-100 hover:border-purple-100/50 rounded-xl p-3.5 transition-all duration-300"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${isPast ? 'bg-gray-300' : 'bg-green-500'}`} />
-                    <p className="text-sm text-gray-700 font-medium">
+                    <span className={`w-2 h-2 rounded-full shrink-0 ${isPast ? 'bg-slate-350' : 'bg-emerald-500 animate-pulse'}`} />
+                    <p className="text-sm font-bold text-slate-800">
                       {inscription.session.titre}
                     </p>
                   </div>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-slate-400 font-semibold shrink-0">
                     {new Date(inscription.session.date).toLocaleDateString('fr-FR')}
                   </p>
                 </div>
